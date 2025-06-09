@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  env: {
+    DUNE_API_KEY: process.env.DUNE_API_KEY,
+  },
+}
 
 module.exports = nextConfig
