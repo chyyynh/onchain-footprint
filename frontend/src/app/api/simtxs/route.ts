@@ -3,8 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const address = req.nextUrl.searchParams.get("wallet");
-  const page = req.nextUrl.searchParams.get("page") || "1";
-  const pageSize = req.nextUrl.searchParams.get("page_size") || "20";
+  const chainIds = req.nextUrl.searchParams.get("chain_ids");
+  const limit = req.nextUrl.searchParams.get("limit") || "20";
+  const offset = req.nextUrl.searchParams.get("offset") || "0";
 
   if (!address) {
     return NextResponse.json(
@@ -13,15 +14,22 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const uri = `?address=${address}&page=${page}&page_size=${pageSize}`;
+  const queryParams = new URLSearchParams({
+    limit,
+    offset,
+  });
+  
+  if (chainIds) {
+    queryParams.set("chain_ids", chainIds);
+  }
 
   try {
     const response = await fetch(
-      `https://api.sim.dune.com/v1/evm/transactions${uri}`,
+      `https://api.sim.dune.com/v1/evm/transactions/${address}?${queryParams.toString()}`,
       {
         method: "GET",
         headers: {
-          "X-Sim-Api-Key": process.env.DUNE_API_KEY || "", // ⚠️ 環境變數要設定
+          "X-Sim-Api-Key": process.env.DUNE_API_KEY || "",
         },
       }
     );

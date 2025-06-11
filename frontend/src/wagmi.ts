@@ -1,13 +1,18 @@
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains'
-import { injected, walletConnect } from 'wagmi/connectors' // Removed coinbaseWallet
+import { injected, walletConnect } from 'wagmi/connectors'
 
 export function getConfig() {
   return createConfig({
     chains: [mainnet, sepolia],
     connectors: [
       injected(),
-      walletConnect({ projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID || '' }),
+      ...(typeof window !== 'undefined' ? [
+        walletConnect({ 
+          projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID || '',
+          showQrModal: true
+        })
+      ] : [])
     ],
     storage: createStorage({
       storage: cookieStorage,
