@@ -151,14 +151,22 @@ export default function FootstepsPage() {
               ))}
             </div>
             
-            {nextOffset && !loading && (
+            {nextOffset && (
               <div className="mt-6 text-center">
                 <Button
                   onClick={loadMore}
                   variant="secondary"
                   size="lg"
+                  disabled={loading}
                 >
-                  Load More Transactions
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Loading More...
+                    </>
+                  ) : (
+                    "Load More Transactions"
+                  )}
                 </Button>
               </div>
             )}
