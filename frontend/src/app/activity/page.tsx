@@ -11,19 +11,28 @@ export default function FootstepsPage() {
   const [wallet, setWallet] = useState("");
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [offset, setOffset] = useState(0);
-  const [nextOffset, setNextOffset] = useState<number | null>(null);
+  const [nextOffset, setNextOffset] = useState<string | null>(null);
 
-  const fetchTransactions = async (resetOffset = false) => {
+  const fetchTransactions = async (resetOffset = false, useOffset?: string) => {
     setLoading(true);
-    const currentOffset = resetOffset ? 0 : offset;
-    const res = await fetch(`/api/simtxs?wallet=${wallet}&limit=20&offset=${currentOffset}`);
+    let offsetParam = "";
+    
+    if (resetOffset) {
+      offsetParam = "0";
+    } else if (useOffset) {
+      offsetParam = useOffset;
+    } else if (nextOffset) {
+      offsetParam = nextOffset;
+    } else {
+      offsetParam = "0";
+    }
+    
+    const res = await fetch(`/api/simtxs?wallet=${wallet}&limit=20&offset=${offsetParam}`);
     const data = await res.json();
     console.log("Fetched transactions:", data);
     
     if (resetOffset) {
       setTransactions(data.transactions || []);
-      setOffset(0);
     } else {
       setTransactions(prev => [...prev, ...(data.transactions || [])]);
     }
@@ -34,8 +43,7 @@ export default function FootstepsPage() {
 
   const loadMore = () => {
     if (nextOffset) {
-      setOffset(nextOffset);
-      fetchTransactions(false);
+      fetchTransactions(false, nextOffset);
     }
   };
 

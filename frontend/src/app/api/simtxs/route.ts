@@ -14,11 +14,15 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const queryParams = new URLSearchParams({
-    limit,
-    offset,
-  });
+  const queryParams = new URLSearchParams();
   
+  // Only add parameters that have valid values
+  if (limit && limit !== "0") {
+    queryParams.set("limit", limit);
+  }
+  if (offset && offset !== "0" && offset !== "") {
+    queryParams.set("offset", offset);
+  }
   if (chainIds) {
     queryParams.set("chain_ids", chainIds);
   }
