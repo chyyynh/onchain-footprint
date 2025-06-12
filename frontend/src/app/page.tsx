@@ -1,6 +1,12 @@
 import { TxList } from "@/components/TxList";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Search, Activity, Zap } from "lucide-react";
 import Link from "next/link";
 
@@ -14,16 +20,16 @@ export default function Home() {
             Track Your OnChain Footprint
           </h1>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Explore blockchain transactions, analyze patterns, and understand your digital footprint across multiple networks.
+            Explore blockchain transactions, analyze patterns, and understand
+            your digital footprint across multiple networks.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button asChild size="lg" className="bg-white text-gray-900 hover:bg-gray-100">
-              <Link href="/activity">
-                Explore Activity
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-gray-900">
-              Connect Wallet
+            <Button
+              asChild
+              size="lg"
+              className="bg-white text-gray-900 hover:bg-gray-100"
+            >
+              <Link href="/activity">Explore Activity</Link>
             </Button>
           </div>
         </div>
@@ -40,11 +46,12 @@ export default function Home() {
               </div>
               <CardTitle>Transaction Analysis</CardTitle>
               <CardDescription>
-                Deep dive into transaction details with comprehensive metadata and insights.
+                Deep dive into transaction details with comprehensive metadata
+                and insights.
               </CardDescription>
             </CardHeader>
           </Card>
-          
+
           <Card className="transition-transform hover:scale-105">
             <CardHeader>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
@@ -52,11 +59,12 @@ export default function Home() {
               </div>
               <CardTitle>Activity Tracking</CardTitle>
               <CardDescription>
-                Monitor wallet activity across multiple blockchain networks in real-time.
+                Monitor wallet activity across multiple blockchain networks in
+                real-time.
               </CardDescription>
             </CardHeader>
           </Card>
-          
+
           <Card className="transition-transform hover:scale-105">
             <CardHeader>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
@@ -64,22 +72,13 @@ export default function Home() {
               </div>
               <CardTitle>Real-time Updates</CardTitle>
               <CardDescription>
-                Get instant notifications and updates on your blockchain transactions.
+                Get instant notifications and updates on your blockchain
+                transactions.
               </CardDescription>
             </CardHeader>
           </Card>
         </div>
       </section>
-
-      {/* Transaction Viewer Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-center">Quick Transaction Lookup</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TxList />
-        </CardContent>
-      </Card>
     </div>
   );
 }

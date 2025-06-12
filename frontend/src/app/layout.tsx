@@ -8,8 +8,8 @@ import Link from "next/link";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "OnChain Footprint",
-  description: "Track and explore blockchain transactions with ease",
+  title: "Ghost Genesis - 鑄造你的鏈上靈魂",
+  description: "基於鏈上足跡生成專屬 RPG 角色與背景故事 | Track and explore blockchain transactions with RPG character generation",
 };
 
 function Header() {
@@ -17,10 +17,12 @@ function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center space-x-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <span className="text-sm font-bold">OF</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+            <span className="text-sm">👻</span>
           </div>
-          <span className="text-xl font-bold">OnChain Footprint</span>
+          <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Ghost Genesis
+          </span>
         </Link>
         
         <nav className="flex items-center space-x-6">
@@ -29,6 +31,9 @@ function Header() {
           </Link>
           <Link href="/activity" className="text-sm font-medium hover:text-primary transition-colors">
             Activity
+          </Link>
+          <Link href="/character" className="text-sm font-medium hover:text-primary transition-colors">
+            🎮 Character
           </Link>
         </nav>
       </div>
