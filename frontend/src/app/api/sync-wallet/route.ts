@@ -1,6 +1,15 @@
 // API endpoint to sync wallet transactions to Supabase
 import { NextRequest, NextResponse } from "next/server";
-import { TransactionStore, transformDuneTransaction, transformDuneTransactionLogs } from "@/lib/supabase-helpers";
+import { 
+  upsertTrackedWallet, 
+  insertTransactions, 
+  insertTransactionLogs, 
+  updateWalletSyncStatus, 
+  getTransactionCount, 
+  getWalletStats,
+  transformDuneTransaction, 
+  transformDuneTransactionLogs 
+} from "@/lib/supabase-helpers";
 import type { DuneTransaction } from "@/types/supabase";
 
 export async function POST(req: NextRequest) {
@@ -16,8 +25,8 @@ export async function POST(req: NextRequest) {
 
     // Step 1: Register the wallet for tracking
     console.log(`Starting sync for wallet: ${wallet}`);
-    await TransactionStore.upsertTrackedWallet(wallet, label);
-    await TransactionStore.updateWalletSyncStatus(wallet, 'syncing');
+    await upsertTrackedWallet(wallet, label);
+    await updateWalletSyncStatus(wallet, 'syncing');
 
     let totalSynced = 0;
     let hasMore = true;
@@ -30,7 +39,7 @@ export async function POST(req: NextRequest) {
         console.log(`Fetching batch with offset: ${nextOffset || '0'}`);
         
         // Fetch from your existing API
-        const apiUrl = nextOffset 
+        const apiUrl: string = nextOffset 
           ? `/api/simtxs?wallet=${wallet}&limit=${batchSize}&offset=${nextOffset}`
           : `/api/simtxs?wallet=${wallet}&limit=${batchSize}&offset=0`;
           
@@ -53,7 +62,7 @@ export async function POST(req: NextRequest) {
           transformDuneTransaction(tx, wallet)
         );
 
-        const insertSuccess = await TransactionStore.insertTransactions(transformedTransactions);
+        const insertSuccess = await insertTransactions(transformedTransactions);
         
         if (!insertSuccess) {
           throw new Error('Failed to insert transactions to database');
@@ -65,7 +74,7 @@ export async function POST(req: NextRequest) {
         );
         
         if (allLogs.length > 0) {
-          await TransactionStore.insertTransactionLogs(allLogs);
+          await insertTransactionLogs(allLogs);
         }
 
         totalSynced += transactions.length;
@@ -83,10 +92,10 @@ export async function POST(req: NextRequest) {
       }
 
       // Step 5: Update wallet sync completion
-      await TransactionStore.updateWalletSyncStatus(wallet, 'completed');
+      await updateWalletSyncStatus(wallet, 'completed');
       
       // Get final stats
-      const finalCount = await TransactionStore.getTransactionCount(wallet);
+      const finalCount = await getTransactionCount(wallet);
 
       console.log(`Sync completed for ${wallet}: ${finalCount} transactions`);
 
@@ -100,7 +109,7 @@ export async function POST(req: NextRequest) {
 
     } catch (syncError) {
       // Mark wallet sync as failed
-      await TransactionStore.updateWalletSyncStatus(wallet, 'error');
+      await updateWalletSyncStatus(wallet, 'error');
       throw syncError;
     }
 
@@ -128,8 +137,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const transactionCount = await TransactionStore.getTransactionCount(wallet);
-    const walletStats = await TransactionStore.getWalletStats(wallet);
+    const transactionCount = await getTransactionCount(wallet);
+    const walletStats = await getWalletStats(wallet);
 
     return NextResponse.json({
       wallet,

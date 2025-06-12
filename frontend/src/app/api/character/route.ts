@@ -1,6 +1,6 @@
 // API endpoint to generate RPG character from wallet transactions
 import { NextRequest, NextResponse } from "next/server";
-import { TransactionStore } from "@/lib/supabase-helpers";
+import { getTransactions } from "@/lib/supabase-helpers";
 import { generateRPGCharacter } from "@/lib/character-engine";
 
 export async function GET(req: NextRequest) {
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   try {
     // Get all transactions for the wallet from database
-    const transactions = await TransactionStore.getTransactions({
+    const transactions = await getTransactions({
       wallet_address: wallet.toLowerCase(),
       limit: 10000 // Get all transactions
     });
