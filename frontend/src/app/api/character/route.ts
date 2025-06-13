@@ -84,5 +84,5 @@ function generateCharacterDescription(character: any): string {
     "D": "你是鏈上世界的新手，還有很大的探索空間。"
   };
 
-  return `${baseDescription}\n\n${rankDescriptions[rank]} 你在鏈上已活躍了 ${character.activeYears} 年，完成了 ${character.totalTransactions} 筆交易，與 ${analysis.uniqueContracts} 個不同的合約進行過互動。`;
+  return `${baseDescription}\n\n${rankDescriptions[rank as keyof typeof rankDescriptions]} 你在鏈上已活躍了 ${character.activeYears} 年，完成了 ${character.totalTransactions} 筆交易，與 ${analysis.uniqueContracts} 個不同的合約進行過互動。`;
 }

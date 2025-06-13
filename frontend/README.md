@@ -10,8 +10,7 @@ Ghost Genesis transforms your onchain activities into unique RPG characters. By 
 
 ## ✨ Core Features
 
-- 🔗 **Wallet Connection**: Support for mainstream EVM wallets
-- 📊 **Transaction Analysis**: Deep analysis of onchain behavior patterns  
+- 📊 **Transaction Analysis**: Deep analysis of onchain behavior patterns
 - 🎮 **Character Generation**: Generate RPG characters based on behavior
 - 📈 **Attribute Radar**: 6-dimensional analysis (Wisdom, Adventure, Aesthetic, Social, Greed, Stability)
 - 🏆 **Rarity System**: S/A/B/C/D five-tier rarity classification
@@ -19,22 +18,24 @@ Ghost Genesis transforms your onchain activities into unique RPG characters. By 
 
 ## 🎭 Character Classes
 
-| Class | Description | Criteria |
-|-------|-------------|----------|
-| 🎨 NFT Collector | Art connoisseur with unique taste | High Aesthetic + Many NFT transactions |
-| ⚗️ DeFi Alchemist | Master of various protocols | High Wisdom + Many DeFi interactions |
-| 🏹 Airdrop Hunter | Opportunity-savvy hunter | High Greed + Frequent trading |
-| 🏛️ Protocol Diplomat | Governance contributor | High Social + DAO participation |
-| 🗺️ Chain Wanderer | Cross-chain explorer | High Adventure + Multi-chain activity |
+| Class                | Description                       | Criteria                               |
+| -------------------- | --------------------------------- | -------------------------------------- |
+| 🎨 NFT Collector     | Art connoisseur with unique taste | High Aesthetic + Many NFT transactions |
+| ⚗️ DeFi Alchemist    | Master of various protocols       | High Wisdom + Many DeFi interactions   |
+| 🏹 Airdrop Hunter    | Opportunity-savvy hunter          | High Greed + Frequent trading          |
+| 🏛️ Protocol Diplomat | Governance contributor            | High Social + DAO participation        |
+| 🗺️ Chain Wanderer    | Cross-chain explorer              | High Adventure + Multi-chain activity  |
 
 ## 🚀 Quick Start
 
 ### Install Dependencies
+
 ```bash
 pnpm install
 ```
 
 ### Environment Setup
+
 ```bash
 # Copy environment template
 cp .env.example .env.local
@@ -46,6 +47,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 ### Start Development Server
+
 ```bash
 pnpm dev
 ```
@@ -64,6 +66,7 @@ Visit [http://localhost:3000](http://localhost:3000) to get started.
 ```
 
 ### Tech Stack
+
 - **Frontend**: Next.js 14, TypeScript, Tailwind CSS
 - **Web3**: wagmi, viem, RainbowKit
 - **Database**: Supabase (PostgreSQL)
@@ -79,11 +82,13 @@ Visit [http://localhost:3000](http://localhost:3000) to get started.
 ## 🔧 API Endpoints
 
 ### Character Generation
+
 ```bash
 GET /api/character?wallet=0x...
 ```
 
 ### Wallet Sync
+
 ```bash
 POST /api/sync-wallet
 {
@@ -93,6 +98,7 @@ POST /api/sync-wallet
 ```
 
 ### Transaction Query
+
 ```bash
 GET /api/simtxs?wallet=0x...&limit=20&offset=0
 ```

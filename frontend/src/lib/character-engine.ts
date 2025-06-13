@@ -25,6 +25,12 @@ export type CharacterClass =
 // Character Rank (from PM doc)
 export type CharacterRank = "S" | "A" | "B" | "C" | "D";
 
+export interface ContractInteraction {
+  protocol: string;
+  count: number;
+  addresses: string[];
+}
+
 export interface RPGCharacter {
   address: string;
   class: CharacterClass;
@@ -40,30 +46,97 @@ export interface RPGCharacter {
     airdrops: string[];
     daoVotes: number;
     uniqueContracts: number;
+    contractInteractions: ContractInteraction[];
   };
 }
 
 // Contract address mappings for analysis
 const KNOWN_CONTRACTS = {
-  // DeFi Protocols
-  UNISWAP_V2: ["0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f"],
-  UNISWAP_V3: ["0x1f98431c8ad98523631ae4a59f267346ea31f984"],
-  AAVE: ["0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9"],
-  COMPOUND: ["0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b"],
-  CURVE: ["0x79a8c46dea5ada233abaffd40f3a0a2b1e5a4f27"],
-  LIDO: ["0xae7ab96520de3a18e5e111b5eaab095312d7fe84"],
+  // Uniswap (Multi-chain)
+  UNISWAP: [
+    "0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f", // V2 Factory Ethereum
+    "0x1f98431c8ad98523631ae4a59f267346ea31f984", // V3 Factory Ethereum
+    "0x7a250d5630b4cf539739df2c5dacb4c659f2488d", // V2 Router Ethereum
+    "0xe592427a0aece92de3edee1f18e0157c05861564", // V3 Router Ethereum
+    "0x33128a8fc17869897dce68ed026d694621f6fdfd", // V3 Factory Base
+    "0x2626664c2603336e57b271c5c0b26f421741e481", // V3 Router Base  
+    "0x27a16dc786820b16e5c9028b75b99f6f604b5d26", // Base Router
+  ],
+  
+  // Aave
+  AAVE: [
+    "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9", // V2 Ethereum
+    "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2", // V3 Ethereum
+    "0xa238dd80c259a72e81d7e4664a9801593f98d1c5", // V3 Base
+  ],
+  
+  // Compound
+  COMPOUND: [
+    "0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b", // Ethereum
+    "0xa17581a9e3356d9a858b789d68b4d866e593ae94", // V3 Ethereum
+  ],
+  
+  // Curve
+  CURVE: [
+    "0x79a8c46dea5ada233abaffd40f3a0a2b1e5a4f27", // Registry Ethereum
+    "0x90e00ace148ca3b23ac1bc8c240c2a7dd9c2d7f5", // Factory Ethereum
+  ],
+  
+  // Lido
+  LIDO: [
+    "0xae7ab96520de3a18e5e111b5eaab095312d7fe84", // stETH Ethereum
+    "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0", // wstETH Ethereum
+  ],
   
   // NFT Marketplaces
-  OPENSEA: ["0x7be8076f4ea4a4ad08075c2508e481d6c946d12b", "0x7f268357a8c2552623316e2562d90e642bb538e5"],
-  ZORA: ["0xabefbc9fd2f806065b4f3c237d4b59d9a97bcac7"],
+  OPENSEA: [
+    "0x7be8076f4ea4a4ad08075c2508e481d6c946d12b", // Ethereum
+    "0x7f268357a8c2552623316e2562d90e642bb538e5", // Ethereum
+    "0x00000000000001ad428e4906ae43d8f9852d0dd6", // Seaport Ethereum
+  ],
   
-  // Layer 2 & Bridges
-  ARBITRUM: ["0x72ce9c846789fdb6fc1f34ac4ad25dd9ef7031ef"],
-  OPTIMISM: ["0x25ace71c97b33cc4729cf772ae268934f7ab5fa1"],
-  POLYGON: ["0x40ec5b33f54e0e8a33a975908c5ba1c14e5bbbdf"],
+  ZORA: [
+    "0xabefbc9fd2f806065b4f3c237d4b59d9a97bcac7", // Ethereum
+  ],
+  
+  // Layer 2 Bridges & Gateways
+  LAYERZERO: [
+    "0x5634c4a5fed09819e3c46d86a965dd9447d86e47", // Base (seen in transactions)
+    "0x1a44076050125825900e736c501f859c50fe728c", // Base (seen in transactions)
+  ],
+  
+  ARBITRUM_BRIDGE: [
+    "0x72ce9c846789fdb6fc1f34ac4ad25dd9ef7031ef", // Ethereum
+    "0x8315177ab297ba92a06054ce80a67ed4dbd7ed3a", // Ethereum
+  ],
+  
+  OPTIMISM_BRIDGE: [
+    "0x25ace71c97b33cc4729cf772ae268934f7ab5fa1", // Ethereum
+    "0x99c9fc46f92e8a1c0dec1b1747d010903e884be1", // Ethereum
+  ],
+  
+  BASE_BRIDGE: [
+    "0x49048044d57e1c92a77f79988d21fa8faf74e97e", // Ethereum
+    "0x3154cf16ccdb4c6d922629664174b904d80f2c35", // Ethereum
+  ],
+  
+  POLYGON_BRIDGE: [
+    "0x40ec5b33f54e0e8a33a975908c5ba1c14e5bbbdf", // Ethereum
+    "0xa0c68c638235ee32657e8f720a23cec1bfc77c77", // Ethereum
+  ],
   
   // ENS
-  ENS: ["0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85"],
+  ENS: [
+    "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85", // Ethereum
+    "0x314159265dd8dbb310642f98f50c066173c1259b", // Ethereum
+  ],
+  
+  // Common ERC20 tokens (USDC, USDT, etc.)
+  STABLECOINS: [
+    "0xa0b86a33e6ee6481c1e7c4c5c4ecb0a4c9e22ad0", // USDC Base
+    "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913", // USDC Base (seen in transactions)
+    "0xa0b2ee912caf7921eaabc866c6ef1520c6a6008c", // USDT Base
+  ],
 };
 
 // Analyze transactions to determine character attributes
@@ -295,8 +368,7 @@ function findDeFiProtocols(transactions: Transaction[]): string[] {
   transactions.forEach(tx => {
     const address = tx.to_address?.toLowerCase() || "";
     
-    if (KNOWN_CONTRACTS.UNISWAP_V2.includes(address) || 
-        KNOWN_CONTRACTS.UNISWAP_V3.includes(address)) {
+    if (KNOWN_CONTRACTS.UNISWAP.includes(address)) {
       protocols.add("Uniswap");
     }
     if (KNOWN_CONTRACTS.AAVE.includes(address)) {
@@ -316,6 +388,127 @@ function findDeFiProtocols(transactions: Transaction[]): string[] {
   return Array.from(protocols);
 }
 
+function analyzeContractInteractions(transactions: Transaction[]): ContractInteraction[] {
+  const interactions: ContractInteraction[] = [];
+  
+  // Count interactions with each known protocol
+  const protocolCounts = new Map<string, { count: number; addresses: Set<string> }>();
+  
+  transactions.forEach(tx => {
+    const address = tx.to_address?.toLowerCase() || "";
+    
+    // Check each protocol
+    if (KNOWN_CONTRACTS.UNISWAP.includes(address)) {
+      const current = protocolCounts.get("Uniswap") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("Uniswap", current);
+    }
+    
+    if (KNOWN_CONTRACTS.AAVE.includes(address)) {
+      const current = protocolCounts.get("Aave") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("Aave", current);
+    }
+    
+    if (KNOWN_CONTRACTS.COMPOUND.includes(address)) {
+      const current = protocolCounts.get("Compound") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("Compound", current);
+    }
+    
+    if (KNOWN_CONTRACTS.CURVE.includes(address)) {
+      const current = protocolCounts.get("Curve") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("Curve", current);
+    }
+    
+    if (KNOWN_CONTRACTS.LIDO.includes(address)) {
+      const current = protocolCounts.get("Lido") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("Lido", current);
+    }
+    
+    if (KNOWN_CONTRACTS.OPENSEA.includes(address)) {
+      const current = protocolCounts.get("OpenSea") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("OpenSea", current);
+    }
+    
+    if (KNOWN_CONTRACTS.ZORA.includes(address)) {
+      const current = protocolCounts.get("Zora") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("Zora", current);
+    }
+    
+    if (KNOWN_CONTRACTS.LAYERZERO.includes(address)) {
+      const current = protocolCounts.get("LayerZero Bridge") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("LayerZero Bridge", current);
+    }
+    
+    if (KNOWN_CONTRACTS.ARBITRUM_BRIDGE.includes(address)) {
+      const current = protocolCounts.get("Arbitrum Bridge") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("Arbitrum Bridge", current);
+    }
+    
+    if (KNOWN_CONTRACTS.OPTIMISM_BRIDGE.includes(address)) {
+      const current = protocolCounts.get("Optimism Bridge") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("Optimism Bridge", current);
+    }
+    
+    if (KNOWN_CONTRACTS.BASE_BRIDGE.includes(address)) {
+      const current = protocolCounts.get("Base Bridge") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("Base Bridge", current);
+    }
+    
+    if (KNOWN_CONTRACTS.POLYGON_BRIDGE.includes(address)) {
+      const current = protocolCounts.get("Polygon Bridge") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("Polygon Bridge", current);
+    }
+    
+    if (KNOWN_CONTRACTS.ENS.includes(address)) {
+      const current = protocolCounts.get("ENS") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("ENS", current);
+    }
+    
+    if (KNOWN_CONTRACTS.STABLECOINS.includes(address)) {
+      const current = protocolCounts.get("Stablecoins") || { count: 0, addresses: new Set() };
+      current.count++;
+      current.addresses.add(address);
+      protocolCounts.set("Stablecoins", current);
+    }
+  });
+  
+  // Convert to array and sort by count
+  protocolCounts.forEach((data, protocol) => {
+    interactions.push({
+      protocol,
+      count: data.count,
+      addresses: Array.from(data.addresses)
+    });
+  });
+  
+  return interactions.sort((a, b) => b.count - a.count);
+}
+
 // Main function to generate complete RPG character
 export function generateRPGCharacter(
   address: string,
@@ -328,6 +521,7 @@ export function generateRPGCharacter(
   const chainsUsed = Array.from(new Set(transactions.map(tx => tx.chain)));
   const nftCount = findNFTTransactions(transactions);
   const defiProtocols = findDeFiProtocols(transactions);
+  const contractInteractions = analyzeContractInteractions(transactions);
   const activeYears = getTransactionTimeSpan(transactions) / (365 * 24 * 60 * 60 * 1000);
   
   return {
@@ -345,7 +539,8 @@ export function generateRPGCharacter(
       daoVotes: 0, // TODO: Implement DAO vote detection  
       uniqueContracts: new Set(
         transactions.filter(tx => tx.to_address).map(tx => tx.to_address!)
-      ).size
+      ).size,
+      contractInteractions
     }
   };
 }
