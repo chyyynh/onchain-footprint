@@ -88,6 +88,10 @@ export interface RPGCharacter {
     displayText: string;
   };
   chainsUsed: string[];
+  transactionActivity: Array<{
+    block_time: string;
+    chain: string;
+  }>;
   analysis: {
     nftCount: number;
     defiProtocols: string[];
@@ -742,6 +746,18 @@ export function generateRPGCharacter(
       displayText: `${activeYearsData.years} Years ${activeYearsData.days} Days`,
     },
     chainsUsed,
+    transactionActivity: mainnetTransactions
+      .filter(tx => {
+        // Only include transactions from the last 365 days for the contribution graph
+        const txDate = new Date(tx.block_time);
+        const oneYearAgo = new Date();
+        oneYearAgo.setDate(oneYearAgo.getDate() - 365);
+        return txDate >= oneYearAgo;
+      })
+      .map(tx => ({
+        block_time: tx.block_time,
+        chain: tx.chain
+      })),
     analysis: {
       nftCount,
       defiProtocols,

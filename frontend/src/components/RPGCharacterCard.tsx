@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { TransactionContributionGraph } from "@/components/TransactionContributionGraph";
 import type { CharacterAttributes, ContractInteraction } from "@/lib/character-engine";
 
 interface RPGCharacterData {
@@ -17,6 +18,10 @@ interface RPGCharacterData {
     displayText: string;
   };
   chainsUsed: string[];
+  transactionActivity?: Array<{
+    block_time: string;
+    chain: string;
+  }>;
   analysis: {
     nftCount: number;
     defiProtocols: string[];
@@ -179,6 +184,14 @@ export function RPGCharacterCard({ character }: RPGCharacterCardProps) {
           )}
         </div>
       </div>
+
+      {/* Transaction Activity Graph - Full Width */}
+      {character.transactionActivity && (
+        <TransactionContributionGraph 
+          transactions={character.transactionActivity}
+          className="mb-6"
+        />
+      )}
 
       {/* Character Story - Full Width */}
       <Card>
