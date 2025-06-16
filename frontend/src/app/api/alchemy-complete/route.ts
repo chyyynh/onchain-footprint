@@ -1,4 +1,4 @@
-// src/app/api/getAllTxAlchemyComplete/route.ts
+// src/app/api/alchemy-complete/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {

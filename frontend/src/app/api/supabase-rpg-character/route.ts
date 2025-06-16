@@ -14,16 +14,39 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Get all transactions for the wallet from database
-    const transactions = await getTransactions({
-      wallet_address: wallet.toLowerCase(),
-      limit: 10000 // Get all transactions
-    });
+    // Get all transactions for the wallet from database in batches
+    const allTransactions: any[] = [];
+    let offset = 0;
+    const batchSize = 1000;
+    let hasMore = true;
+    
+    while (hasMore) {
+      const batch = await getTransactions({
+        wallet_address: wallet.toLowerCase(),
+        limit: batchSize,
+        offset: offset
+      });
+      
+      if (batch.length === 0) {
+        hasMore = false;
+      } else {
+        allTransactions.push(...batch);
+        offset += batchSize;
+        
+        // Safety check to prevent infinite loops
+        if (allTransactions.length > 50000 || batch.length < batchSize) {
+          hasMore = false;
+        }
+      }
+    }
+    
+    console.log(`🔄 Fetched ${allTransactions.length} total transactions in batches`);
+    const transactions = allTransactions;
 
     if (transactions.length === 0) {
       return NextResponse.json({
         error: "No transactions found",
-        message: "Please sync wallet transactions first using /api/sync-wallet"
+        message: "Please sync wallet transactions first using /api/supabase-wallet-sync"
       }, { status: 404 });
     }
 

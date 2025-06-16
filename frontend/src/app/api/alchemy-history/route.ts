@@ -1,4 +1,4 @@
-// src/app/api/txs/route.ts
+// src/app/api/alchemy-history/route.ts
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {

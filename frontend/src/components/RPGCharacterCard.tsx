@@ -11,6 +11,11 @@ interface RPGCharacterData {
   attributes: CharacterAttributes;
   totalTransactions: number;
   activeYears: number;
+  activeYearsDetailed?: {
+    years: number;
+    days: number;
+    displayText: string;
+  };
   chainsUsed: string[];
   analysis: {
     nftCount: number;
@@ -89,7 +94,9 @@ export function RPGCharacterCard({ character }: RPGCharacterCardProps) {
               <div className="text-sm text-slate-400">總交易數</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-green-400">{character.activeYears}</div>
+              <div className="text-3xl font-bold text-green-400">
+                {character.activeYearsDetailed?.displayText || character.activeYears}
+              </div>
               <div className="text-sm text-slate-400">活躍年數</div>
             </div>
             <div>

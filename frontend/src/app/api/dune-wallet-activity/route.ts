@@ -1,4 +1,4 @@
-// app/api/activity/route.ts
+// app/api/dune-wallet-activity/route.ts
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {

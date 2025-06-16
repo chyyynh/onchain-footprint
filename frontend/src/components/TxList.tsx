@@ -17,7 +17,7 @@ export function TxList() {
     if (!address) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/txs?wallet=${address}`);
+      const res = await fetch(`/api/alchemy-history?wallet=${address}`);
       const data = await res.json();
       if (Array.isArray(data.txs)) {
         setTxs(data.txs);

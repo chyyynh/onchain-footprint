@@ -27,7 +27,7 @@ export default function FootstepsPage() {
       offsetParam = "0";
     }
     
-    const res = await fetch(`/api/simtxs?wallet=${wallet}&limit=20&offset=${offsetParam}`);
+    const res = await fetch(`/api/dune-transactions?wallet=${wallet}&limit=20&offset=${offsetParam}`);
     const data = await res.json();
     console.log("Fetched transactions:", data);
     

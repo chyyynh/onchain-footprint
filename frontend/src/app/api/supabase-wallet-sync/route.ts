@@ -40,8 +40,8 @@ export async function POST(req: NextRequest) {
         
         // Fetch from your existing API
         const apiUrl: string = nextOffset 
-          ? `/api/simtxs?wallet=${wallet}&limit=${batchSize}&offset=${nextOffset}`
-          : `/api/simtxs?wallet=${wallet}&limit=${batchSize}&offset=0`;
+          ? `/api/dune-transactions?wallet=${wallet}&limit=${batchSize}&offset=${nextOffset}`
+          : `/api/dune-transactions?wallet=${wallet}&limit=${batchSize}&offset=0`;
           
         const response = await fetch(`${req.nextUrl.origin}${apiUrl}`);
         const data = await response.json();

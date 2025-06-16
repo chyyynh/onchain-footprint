@@ -19,18 +19,20 @@ export default function CharacterPage() {
   const generateCharacter = async (walletAddress: string) => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      const response = await fetch(`/api/character?wallet=${walletAddress}`);
+      const response = await fetch(
+        `/api/supabase-rpg-character?wallet=${walletAddress}`
+      );
       const data = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate character');
+        throw new Error(data.error || "Failed to generate character");
       }
-      
+
       setCharacter(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -58,12 +60,6 @@ export default function CharacterPage() {
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             Ghost Genesis
           </h1>
-          <p className="text-xl text-muted-foreground mb-6">
-            🔮 鑄造你的鏈上靈魂 • 在迷霧中發現真實的自己
-          </p>
-          <p className="text-sm text-slate-600">
-            基於你的鏈上足跡，生成專屬的 RPG 角色與背景故事
-          </p>
         </div>
 
         {/* Input Section */}
@@ -73,7 +69,7 @@ export default function CharacterPage() {
               <div className="flex justify-center">
                 <ConnectButton />
               </div>
-              
+
               <div className="flex gap-3">
                 <Input
                   value={walletInput}
@@ -100,14 +96,18 @@ export default function CharacterPage() {
                   )}
                 </Button>
               </div>
-              
+
               {/* Quick Test Button */}
               <div className="text-center">
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setWalletInput("0xC79Ead066Ba487398F57f6083A97890d77C55482");
-                    generateCharacter("0xC79Ead066Ba487398F57f6083A97890d77C55482");
+                    setWalletInput(
+                      "0xC79Ead066Ba487398F57f6083A97890d77C55482"
+                    );
+                    generateCharacter(
+                      "0xC79Ead066Ba487398F57f6083A97890d77C55482"
+                    );
                   }}
                   className="text-sm"
                 >
@@ -128,7 +128,8 @@ export default function CharacterPage() {
                   <div className="mt-2 text-sm">
                     <p>請先同步錢包交易數據:</p>
                     <code className="bg-red-100 px-2 py-1 rounded text-xs">
-                      POST /api/sync-wallet {`{"wallet": "${walletInput}"}`}
+                      POST /api/supabase-wallet-sync{" "}
+                      {`{"wallet": "${walletInput}"}`}
                     </code>
                   </div>
                 )}
@@ -149,7 +150,9 @@ export default function CharacterPage() {
           <Card className="text-center py-12">
             <CardContent>
               <div className="text-6xl mb-4">👻</div>
-              <h3 className="text-lg font-semibold mb-2">等待喚醒你的鏈上靈魂</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                等待喚醒你的鏈上靈魂
+              </h3>
               <p className="text-muted-foreground">
                 輸入錢包地址，讓我們分析你的鏈上足跡，生成專屬的 RPG 角色
               </p>
@@ -160,8 +163,8 @@ export default function CharacterPage() {
         {/* Info Footer */}
         <div className="mt-12 text-center text-sm text-slate-500">
           <p>
-            ✨ 基於 {character?.totalTransactions || "N/A"} 筆鏈上交易數據分析生成 •{" "}
-            數據來源: Dune Analytics + Supabase
+            ✨ 基於 {character?.totalTransactions || "N/A"}{" "}
+            筆鏈上交易數據分析生成 • 數據來源: Dune Analytics + Supabase
           </p>
         </div>
       </div>

@@ -39,6 +39,11 @@ export interface RPGCharacter {
   description: string;
   totalTransactions: number;
   activeYears: number;
+  activeYearsDetailed: {
+    years: number;
+    days: number;
+    displayText: string;
+  };
   chainsUsed: string[];
   analysis: {
     nftCount: number;
@@ -348,17 +353,77 @@ function getTransactionTimeSpan(transactions: Transaction[]): number {
   return latest - earliest; // milliseconds
 }
 
+function calculateActiveYears(transactions: Transaction[]): { years: number; days: number; totalYears: number } {
+  if (transactions.length === 0) return { years: 0, days: 0, totalYears: 0 };
+  
+  const times = transactions.map(tx => new Date(tx.block_time).getTime());
+  const earliest = Math.min(...times);
+  const latest = Math.max(...times);
+  
+  const timeSpanMs = latest - earliest;
+  const timeSpanDays = Math.floor(timeSpanMs / (24 * 60 * 60 * 1000));
+  
+  const years = Math.floor(timeSpanDays / 365);
+  const remainingDays = timeSpanDays % 365;
+  const totalYears = Math.round((timeSpanDays / 365) * 10) / 10;
+  
+  // Debug logging
+  const earliestDate = new Date(earliest).toLocaleDateString();
+  const latestDate = new Date(latest).toLocaleDateString();
+  console.log(`📅 Transaction date range: ${earliestDate} to ${latestDate}`);
+  console.log(`⏱️  Total days: ${timeSpanDays}, Years: ${years}, Remaining days: ${remainingDays}`);
+  
+  return {
+    years,
+    days: remainingDays,
+    totalYears
+  };
+}
+
 function findNFTTransactions(transactions: Transaction[]): number {
   // Look for ERC721/ERC1155 transfer signatures and known NFT contracts
   return transactions.filter(tx => {
     const data = tx.input_data?.toLowerCase() || "";
-    return (
+    const toAddress = tx.to_address?.toLowerCase() || "";
+    
+    // ERC721/ERC1155 function signatures
+    const hasNFTSignature = (
       data.includes("0xa22cb465") || // setApprovalForAll
       data.includes("0x23b872dd") || // transferFrom
-      data.includes("0x42842e0e") || // safeTransferFrom
-      KNOWN_CONTRACTS.OPENSEA.includes(tx.to_address?.toLowerCase() || "") ||
-      KNOWN_CONTRACTS.ZORA.includes(tx.to_address?.toLowerCase() || "")
+      data.includes("0x42842e0e") || // safeTransferFrom(address,address,uint256)
+      data.includes("0xb88d4fde") || // safeTransferFrom(address,address,uint256,bytes)
+      data.includes("0xf242432a") || // safeTransferFrom (ERC1155)
+      data.includes("0x2eb2c2d6") || // safeBatchTransferFrom (ERC1155)
+      data.includes("0x1fad948c") || // approve (ERC721)
+      data.includes("0xa9059cbb") || // transfer (could be NFT)
+      data.includes("0x40c10f19") || // mint
+      data.includes("0x6352211e")    // ownerOf
     );
+    
+    // Known NFT marketplaces and platforms
+    const isNFTMarketplace = (
+      KNOWN_CONTRACTS.OPENSEA.includes(toAddress) ||
+      KNOWN_CONTRACTS.ZORA.includes(toAddress) ||
+      toAddress === "0x59728544b08ab483533076417fbbb2fd0b17ce3a" || // LooksRare
+      toAddress === "0x74312363e45dcaba76c59ec49a7aa8a65a67eed3" || // X2Y2
+      toAddress === "0x0000000000e655fae4d56241588680f86e3b2377" || // Foundation
+      toAddress === "0x2953399124f0cbb46d2cbacd8a89cf0599974963" || // SuperRare
+      toAddress === "0x495f947276749ce646f68ac8c248420045cb7b5e" || // OpenSea Shared Storefront
+      toAddress === "0xc2edad668740f1aa35e4d8f227fb8e17dca888cd" || // KnownOrigin
+      toAddress === "0x60e4d786628fea6478f785a6d7e704777c86a7c6" || // AsyncArt
+      toAddress === "0xa5409ec958c83c3f309868babaca7c86dcb077c1"    // Rarible
+    );
+    
+    // Common NFT collection patterns (many NFT contracts start with specific patterns)
+    const hasNFTPattern = (
+      data.includes("tokenuri") ||
+      data.includes("metadata") ||
+      data.includes("tokenid") ||
+      data.includes("721") ||
+      data.includes("1155")
+    );
+    
+    return hasNFTSignature || isNFTMarketplace || hasNFTPattern;
   }).length;
 }
 
@@ -514,6 +579,25 @@ export function generateRPGCharacter(
   address: string,
   transactions: Transaction[]
 ): Omit<RPGCharacter, 'description'> {
+  // Debug logging to help identify issues
+  console.log(`🎮 Generating RPG Character for ${address}`);
+  console.log(`📊 Total transactions received: ${transactions.length}`);
+  console.log(`⚠️  WARNING: This calculation is limited to transactions currently in the database`);
+  console.log(`📝 To get accurate active years, you need to sync ALL historical transactions first`);
+  
+  if (transactions.length > 0) {
+    const timeSpanMs = getTransactionTimeSpan(transactions);
+    const timeSpanDays = timeSpanMs / (24 * 60 * 60 * 1000);
+    const chains = Array.from(new Set(transactions.map(tx => tx.chain)));
+    
+    console.log(`⏱️  Time span: ${Math.round(timeSpanDays)} days (${Math.round(timeSpanDays/365 * 10)/10} years)`);
+    console.log(`🔗 Chains found: ${chains.length} - ${chains.join(', ')}`);
+    console.log(`📅 Date range: ${new Date(Math.min(...transactions.map(tx => new Date(tx.block_time).getTime()))).toLocaleDateString()} to ${new Date(Math.max(...transactions.map(tx => new Date(tx.block_time).getTime()))).toLocaleDateString()}`);
+    console.log(`🔍 ACTUAL TRANSACTION DATA SOURCE: Supabase database (may be incomplete)`);
+    console.log(`📋 First transaction: ${new Date(Math.min(...transactions.map(tx => new Date(tx.block_time).getTime()))).toISOString()}`);
+    console.log(`📋 Last transaction: ${new Date(Math.max(...transactions.map(tx => new Date(tx.block_time).getTime()))).toISOString()}`);
+  }
+
   const attributes = analyzeCharacterAttributes(transactions);
   const characterClass = determineCharacterClass(transactions, attributes);
   const rank = calculateCharacterRank(transactions);
@@ -522,7 +606,11 @@ export function generateRPGCharacter(
   const nftCount = findNFTTransactions(transactions);
   const defiProtocols = findDeFiProtocols(transactions);
   const contractInteractions = analyzeContractInteractions(transactions);
-  const activeYears = getTransactionTimeSpan(transactions) / (365 * 24 * 60 * 60 * 1000);
+  const activeYearsData = calculateActiveYears(transactions);
+  
+  console.log(`🎨 NFT transactions found: ${nftCount}`);
+  console.log(`💰 DeFi protocols: ${defiProtocols.length} - ${defiProtocols.join(', ')}`);
+  console.log(`📊 Active time: ${activeYearsData.years} years, ${activeYearsData.days} days`);
   
   return {
     address,
@@ -530,7 +618,12 @@ export function generateRPGCharacter(
     rank,
     attributes,
     totalTransactions: transactions.length,
-    activeYears: Math.round(activeYears * 10) / 10,
+    activeYears: activeYearsData.totalYears,
+    activeYearsDetailed: {
+      years: activeYearsData.years,
+      days: activeYearsData.days,
+      displayText: `${activeYearsData.years} Years ${activeYearsData.days} Days`
+    },
     chainsUsed,
     analysis: {
       nftCount,
