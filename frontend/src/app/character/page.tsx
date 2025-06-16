@@ -55,12 +55,13 @@ export default function CharacterPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
+        {/* Header 
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             Ghost Genesis
           </h1>
         </div>
+        */}
 
         {/* Input Section */}
         <Card className="mb-8">

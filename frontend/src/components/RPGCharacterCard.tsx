@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TransactionContributionGraph } from "@/components/TransactionContributionGraph";
+import { HexagonRadarChart } from "@/components/HexagonRadarChart";
 import type { CharacterAttributes, ContractInteraction } from "@/lib/character-engine";
 
 interface RPGCharacterData {
@@ -47,33 +48,6 @@ export function RPGCharacterCard({ character }: RPGCharacterCardProps) {
     return colors[rank as keyof typeof colors] || colors.D;
   };
 
-  const getAttributeStars = (value: number) => {
-    return "⭐".repeat(value) + "☆".repeat(5 - value);
-  };
-
-  const getAttributeEmoji = (attribute: keyof CharacterAttributes) => {
-    const emojis = {
-      wisdom: "🧠",
-      adventure: "🧭", 
-      aesthetic: "🎨",
-      social: "👥",
-      greed: "🪙",
-      stability: "🔒"
-    };
-    return emojis[attribute];
-  };
-
-  const getAttributeName = (attribute: keyof CharacterAttributes) => {
-    const names = {
-      wisdom: "智慧",
-      adventure: "冒險",
-      aesthetic: "美感", 
-      social: "社交",
-      greed: "貪婪",
-      stability: "安全感"
-    };
-    return names[attribute];
-  };
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -123,20 +97,9 @@ export function RPGCharacterCard({ character }: RPGCharacterCardProps) {
           {/* Attributes */}
           <Card>
             <CardContent className="p-6">
-              <h2 className="text-xl font-bold mb-4">角色屬性</h2>
-              <div className="grid grid-cols-1 gap-3">
-                {Object.entries(character.attributes).map(([key, value]) => (
-                  <div key={key} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">{getAttributeEmoji(key as keyof CharacterAttributes)}</span>
-                      <span className="font-medium">{getAttributeName(key as keyof CharacterAttributes)}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-mono">{value}/5</span>
-                      <span className="text-lg">{getAttributeStars(value)}</span>
-                    </div>
-                  </div>
-                ))}
+              <h2 className="text-xl font-bold mb-4 text-center">角色屬性</h2>
+              <div className="flex justify-center">
+                <HexagonRadarChart attributes={character.attributes} size={320} />
               </div>
             </CardContent>
           </Card>
