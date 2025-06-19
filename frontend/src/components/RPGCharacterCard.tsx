@@ -92,21 +92,21 @@ export function RPGCharacterCard({ character }: RPGCharacterCardProps) {
 
       {/* Main Content Grid - Left/Right Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Left Column */}
-        <div className="space-y-6">
-          {/* Attributes */}
-          <Card>
-            <CardContent className="p-6">
-              <h2 className="text-xl font-bold mb-4 text-center">角色屬性</h2>
-              <div className="flex justify-center">
-                <HexagonRadarChart attributes={character.attributes} size={320} />
-              </div>
-            </CardContent>
-          </Card>
+        {/* Left Column - Radar Chart */}
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-xl font-bold mb-4 text-center">角色屬性</h2>
+            <div className="flex justify-center">
+              <HexagonRadarChart attributes={character.attributes} size={320} />
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Chains Used */}
-          <Card>
-            <CardContent className="p-6">
+        {/* Right Column - Protocol Interactions & Blockchain */}
+        <Card className="flex-1">
+          <CardContent className="p-6">
+            {/* Chains Used */}
+            <div className="mb-6">
               <h2 className="text-xl font-bold mb-4">探索的區塊鏈世界</h2>
               <div className="flex flex-wrap gap-2">
                 {character.chainsUsed.map((chain) => (
@@ -115,37 +115,34 @@ export function RPGCharacterCard({ character }: RPGCharacterCardProps) {
                   </Badge>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
 
-        {/* Right Column */}
-        <div className="space-y-6">
-          {/* Contract Interactions */}
-          {character.analysis.contractInteractions.length > 0 && (
-            <Card>
-              <CardContent className="p-6">
+            {/* Contract Interactions */}
+            {character.analysis.contractInteractions.length > 0 && (
+              <div>
                 <h2 className="text-xl font-bold mb-4">協議互動統計</h2>
-                <div className="grid grid-cols-2 gap-3">
-                  {character.analysis.contractInteractions.map((interaction) => (
-                    <div key={interaction.protocol} className="bg-slate-50 rounded-lg p-4 text-center">
-                      <div className="font-medium text-sm text-slate-700 mb-1">
-                        {interaction.protocol}
+                <div className="overflow-x-auto">
+                  <div className="flex gap-3 pb-2" style={{ minWidth: 'max-content' }}>
+                    {character.analysis.contractInteractions.map((interaction) => (
+                      <div key={interaction.protocol} className="bg-slate-50 rounded-lg p-4 text-center flex-shrink-0 min-w-[140px]">
+                        <div className="font-medium text-sm text-slate-700 mb-1">
+                          {interaction.protocol}
+                        </div>
+                        <div className="text-2xl font-bold text-blue-600 mb-1">
+                          {interaction.count}
+                        </div>
+                        <div className="text-xs text-slate-500 mb-2">次互動</div>
+                        <Badge variant="secondary" className="text-xs">
+                          {interaction.addresses.length} 個合約
+                        </Badge>
                       </div>
-                      <div className="text-2xl font-bold text-blue-600 mb-1">
-                        {interaction.count}
-                      </div>
-                      <div className="text-xs text-slate-500 mb-2">次互動</div>
-                      <Badge variant="secondary" className="text-xs">
-                        {interaction.addresses.length} 個合約
-                      </Badge>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {/* Transaction Activity Graph - Full Width */}

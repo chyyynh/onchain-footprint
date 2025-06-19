@@ -75,20 +75,20 @@ export function HexagonRadarChart({
   return (
     <div className={`flex flex-col items-center relative ${className}`}>
       <div style={{ width: size, height: size }} className="relative">
-        <svg width={size} height={size} className="drop-shadow-sm">
+        <svg width={size} height={size} className="drop-shadow-lg">
           {/* Grid lines */}
           {gridLevels.map((level) => (
             <polygon
               key={`grid-${level}`}
               points={getHexagonPoints(level)}
               fill="none"
-              stroke={level === 5 ? "#e2e8f0" : "#f1f5f9"}
+              stroke={level === 5 ? "#374151" : "#e5e7eb"}
               strokeWidth={level === 5 ? 2 : 1}
-              className="opacity-60"
+              className="opacity-50"
             />
           ))}
           
-          {/* Axis lines from center to vertices */}
+          {/* Axis lines */}
           {attributeConfig.map(({ angle }, index) => {
             const radian = (angle * Math.PI) / 180;
             const x = center + maxRadius * Math.cos(radian);
@@ -100,7 +100,7 @@ export function HexagonRadarChart({
                 y1={center}
                 x2={x}
                 y2={y}
-                stroke="#e2e8f0"
+                stroke="#d1d5db"
                 strokeWidth={1}
                 className="opacity-40"
               />
@@ -110,7 +110,7 @@ export function HexagonRadarChart({
           {/* Data area */}
           <polygon
             points={dataPolygonPoints}
-            fill="url(#radarGradient)"
+            fill="rgba(59, 130, 246, 0.2)"
             stroke="#3b82f6"
             strokeWidth={2}
             className="opacity-80"
@@ -124,9 +124,8 @@ export function HexagonRadarChart({
                 cy={y}
                 r={4}
                 fill="#3b82f6"
-                stroke="white"
+                stroke="#ffffff"
                 strokeWidth={2}
-                className="drop-shadow-sm"
               />
               {value > 0 && (
                 <text
@@ -145,27 +144,19 @@ export function HexagonRadarChart({
           <circle
             cx={center}
             cy={center}
-            r={2}
-            fill="#64748b"
+            r={3}
+            fill="#6b7280"
             className="opacity-60"
           />
           
-          {/* Gradient definition */}
-          <defs>
-            <radialGradient id="radarGradient" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.3} />
-              <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.1} />
-            </radialGradient>
-          </defs>
-          
-          {/* Labels directly in the main SVG */}
+          {/* Labels */}
           {labelPositions.map(({ x, y, label, emoji, textAnchor }, index) => (
             <text
               key={`label-${index}`}
               x={x}
-              y={y + 4} // Adjust for better vertical centering
+              y={y + 4}
               textAnchor={textAnchor}
-              className="text-sm font-medium fill-slate-700"
+              className="text-sm font-medium fill-slate-600"
               dominantBaseline="middle"
             >
               {emoji} {label}
@@ -176,12 +167,8 @@ export function HexagonRadarChart({
       
       {/* Legend */}
       <div className="mt-4 text-center">
-        <div className="text-xs text-slate-500 mb-2">屬性雷達圖</div>
-        <div className="flex items-center justify-center gap-4 text-xs text-slate-600">
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-blue-500 rounded-full opacity-80"></div>
-            <span>數值 (0-5)</span>
-          </div>
+        <div className="text-xs text-slate-500">
+          屬性等級 (0-5)
         </div>
       </div>
     </div>
