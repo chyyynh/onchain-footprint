@@ -36,6 +36,7 @@ interface RPGCharacterCardProps {
   character: RPGCharacterData;
 }
 
+
 export function RPGCharacterCard({ character }: RPGCharacterCardProps) {
   const getRankColor = (rank: string) => {
     const colors = {
@@ -66,25 +67,39 @@ export function RPGCharacterCard({ character }: RPGCharacterCardProps) {
             </Badge>
           </div>
 
-          {/* Stats Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div>
-              <div className="text-3xl font-bold text-blue-400">{character.totalTransactions}</div>
-              <div className="text-sm text-slate-400">總交易數</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-green-400">
-                {character.activeYearsDetailed?.displayText || character.activeYears}
+          {/* Stats & Character Image - Gaming Profile Layout */}
+          <div className="flex gap-6 h-full">
+            {/* Stats Column - 1/3 Width */}
+            <div className="w-1/3 flex flex-col justify-between">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-400">{character.totalTransactions}</div>
+                <div className="text-sm text-slate-400">總交易數</div>
               </div>
-              <div className="text-sm text-slate-400">活躍年數</div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-400">
+                  {character.activeYearsDetailed?.displayText || character.activeYears}
+                </div>
+                <div className="text-sm text-slate-400">活躍年數</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-purple-400">{character.chainsUsed.length}</div>
+                <div className="text-sm text-slate-400">使用鏈數</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-pink-400">{character.analysis.nftCount}</div>
+                <div className="text-sm text-slate-400">NFT 收藏</div>
+              </div>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-purple-400">{character.chainsUsed.length}</div>
-              <div className="text-sm text-slate-400">使用鏈數</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-pink-400">{character.analysis.nftCount}</div>
-              <div className="text-sm text-slate-400">NFT 收藏</div>
+            
+            {/* Character Image Placeholder - 2/3 Width */}
+            <div className="w-2/3 flex justify-center items-center">
+              <div className="aspect-square w-full max-w-sm bg-gradient-to-br from-slate-200 to-slate-300 rounded-xl flex items-center justify-center border-2 border-slate-300">
+                <div className="text-center text-slate-500">
+                  <div className="text-6xl mb-3">🎭</div>
+                  <div className="text-lg font-medium">Character Avatar</div>
+                  <div className="text-sm text-slate-400 mt-1">Generated from onchain history</div>
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>
