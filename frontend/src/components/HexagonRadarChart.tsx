@@ -19,21 +19,20 @@ export function HexagonRadarChart({
   const center = size / 2; // Center of the full SVG
   const maxRadius = chartSize / 2; // Radius within the inner area
   
-  // Define the 6 attributes and their positions (starting from top, clockwise)
+  // Define the 5 attributes and their positions (starting from top, clockwise)
   const attributeConfig = [
     { key: 'wisdom' as keyof CharacterAttributes, label: '智慧', emoji: '🧠', angle: -90 },
-    { key: 'adventure' as keyof CharacterAttributes, label: '冒險', emoji: '🧭', angle: -30 },
-    { key: 'aesthetic' as keyof CharacterAttributes, label: '美感', emoji: '🎨', angle: 30 },
-    { key: 'social' as keyof CharacterAttributes, label: '社交', emoji: '👥', angle: 90 },
-    { key: 'greed' as keyof CharacterAttributes, label: '貪婪', emoji: '🪙', angle: 150 },
-    { key: 'stability' as keyof CharacterAttributes, label: '穩定', emoji: '🔒', angle: -150 },
+    { key: 'adventure' as keyof CharacterAttributes, label: '冒險', emoji: '🧭', angle: -18 },
+    { key: 'aesthetic' as keyof CharacterAttributes, label: '美感', emoji: '🎨', angle: 54 },
+    { key: 'social' as keyof CharacterAttributes, label: '社交', emoji: '👥', angle: 126 },
+    { key: 'greed' as keyof CharacterAttributes, label: '貪婪', emoji: '🪙', angle: -162 },
   ];
   
-  // Generate hexagon grid lines (5 levels)
+  // Generate pentagon grid lines (5 levels)
   const gridLevels = [1, 2, 3, 4, 5];
   
-  // Calculate points for hexagon at each grid level
-  const getHexagonPoints = (level: number) => {
+  // Calculate points for pentagon at each grid level
+  const getPentagonPoints = (level: number) => {
     const radius = (maxRadius * level) / 5;
     return attributeConfig.map(({ angle }) => {
       const radian = (angle * Math.PI) / 180;
@@ -80,7 +79,7 @@ export function HexagonRadarChart({
           {gridLevels.map((level) => (
             <polygon
               key={`grid-${level}`}
-              points={getHexagonPoints(level)}
+              points={getPentagonPoints(level)}
               fill="none"
               stroke={level === 5 ? "#374151" : "#e5e7eb"}
               strokeWidth={level === 5 ? 2 : 1}
@@ -117,27 +116,16 @@ export function HexagonRadarChart({
           />
           
           {/* Data points */}
-          {dataPoints.map(({ x, y, value }, index) => (
-            <g key={`point-${index}`}>
-              <circle
-                cx={x}
-                cy={y}
-                r={4}
-                fill="#3b82f6"
-                stroke="#ffffff"
-                strokeWidth={2}
-              />
-              {value > 0 && (
-                <text
-                  x={x}
-                  y={y - 12}
-                  textAnchor="middle"
-                  className="text-xs font-semibold fill-slate-700"
-                >
-                  {value}
-                </text>
-              )}
-            </g>
+          {dataPoints.map(({ x, y }, index) => (
+            <circle
+              key={`point-${index}`}
+              cx={x}
+              cy={y}
+              r={4}
+              fill="#3b82f6"
+              stroke="#ffffff"
+              strokeWidth={2}
+            />
           ))}
           
           {/* Center point */}
@@ -149,19 +137,33 @@ export function HexagonRadarChart({
             className="opacity-60"
           />
           
-          {/* Labels */}
-          {labelPositions.map(({ x, y, label, emoji, textAnchor }, index) => (
-            <text
-              key={`label-${index}`}
-              x={x}
-              y={y + 4}
-              textAnchor={textAnchor}
-              className="text-sm font-medium fill-slate-600"
-              dominantBaseline="middle"
-            >
-              {emoji} {label}
-            </text>
-          ))}
+          {/* Attribute Labels with Values */}
+          {labelPositions.map(({ x, y, label, textAnchor }, index) => {
+            const attributeKey = attributeConfig[index].key;
+            const value = attributes[attributeKey];
+            return (
+              <g key={`label-${index}`}>
+                <text
+                  x={x}
+                  y={y - 8}
+                  textAnchor={textAnchor}
+                  className="text-sm font-medium fill-slate-600"
+                  dominantBaseline="middle"
+                >
+                  {label}
+                </text>
+                <text
+                  x={x}
+                  y={y + 8}
+                  textAnchor={textAnchor}
+                  className="text-lg font-bold fill-blue-600"
+                  dominantBaseline="middle"
+                >
+                  {value}
+                </text>
+              </g>
+            );
+          })}
         </svg>
       </div>
       

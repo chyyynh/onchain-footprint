@@ -1,14 +1,13 @@
 // RPG Character Engine - Transform onchain footprint to RPG character
 import type { Transaction } from "@/types/supabase";
 
-// Character Attributes (from PM doc)
+// Character Attributes (updated to 5 dimensions)
 export interface CharacterAttributes {
-  wisdom: number; // 🧠 DeFi interactions, asset management
-  adventure: number; // 🧭 Multi-chain exploration, new protocols
-  aesthetic: number; // 🎨 NFT participation, ENS, art protocols
-  social: number; // 👥 DAO participation, POAP, social protocols
-  greed: number; // 🪙 Airdrop hunting, frequent trading
-  stability: number; // 🔒 Long-term holding, mainstream protocols
+  wisdom: number; // 🧠 DeFi interactions, asset management (僧人)
+  adventure: number; // 🧭 Multi-chain exploration, new protocols (武士)
+  aesthetic: number; // 🎨 NFT participation, ENS, art protocols (獵人)
+  social: number; // 👥 DAO participation, POAP, social protocols (詩人)
+  greed: number; // 🪙 Airdrop hunting, frequent trading (盜賊)
 }
 
 // Character Classes (from PM doc)
@@ -201,7 +200,6 @@ export function analyzeCharacterAttributes(
     aesthetic: 0,
     social: 0,
     greed: 0,
-    stability: 0,
   };
 
   // Get unique chains and contracts
@@ -268,19 +266,6 @@ export function analyzeCharacterAttributes(
   // Frequent contract interactions (could indicate farming)
   if (contractsInteracted.size > 100) attributes.greed += 1;
 
-  // Stability: Long-term patterns, mainstream protocol usage
-  const transactionSpan = getTransactionTimeSpan(transactions);
-  if (transactionSpan > 365) attributes.stability += 2; // >1 year active
-  if (transactionSpan > 730) attributes.stability += 2; // >2 years active
-
-  // Low frequency indicates stability
-  if (dailyTransactions < 1) attributes.stability += 2;
-
-  // Usage of mainstream protocols indicates stability
-  const mainstreamProtocols = ["uniswap", "aave", "compound"].filter(
-    (protocol) => defiProtocols.some((p) => p.toLowerCase().includes(protocol))
-  );
-  if (mainstreamProtocols.length > 0) attributes.stability += 1;
 
   // Cap all attributes at 5
   Object.keys(attributes).forEach((key) => {
@@ -301,7 +286,6 @@ export function determineCharacterClass(
   const nftCount = findNFTTransactions(transactions);
   const defiProtocols = findDeFiProtocols(transactions);
   const chainsUsed = new Set(transactions.map((tx) => tx.chain));
-  const contractsUsed = new Set(transactions.map((tx) => tx.to_address)).size;
 
   // NFT Collector: High aesthetic, many NFT transactions
   if (attributes.aesthetic >= 4 && nftCount > 20) {
